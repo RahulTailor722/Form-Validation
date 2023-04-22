@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation</title>
+
+  <style>
+    body {
+    background: black;
+}
+.myForm .form-control {
+    width: 100%;
+    padding-bottom: 20px;
+    position: relative;
+}
+.form-control label {
+    text-transform: capitalize;
+    margin-bottom: 6px;
+    display: block;
+}
+.form-control small {
+    color: red;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    visibility: hidden;
+}
+.myForm .form-control.error small{
+  visibility: visible;
+}
+.myForm .form-control.sucess input{
+  border: 1px solid green;
+}
+.myForm .form-control.error input{
+  border: 1px solid red;
+}
+.myForm input{
+  display: block;
+    width: 100%;
+    height: 35px;
+    border: 1px solid #80808073;
+    border-radius: 5px;
+}
+.myForm button {
+    background: black;
+    color: white;
+    padding: 9px 50px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+    form#form {
+    background: white;
+    max-width: 35%;
+    margin: 0 auto;
+    padding: 30px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 2px 9px #00000078;
+    border-radius: 20px;
+}
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <form id="form" class="myForm" name="user-validate">
+      <h2>Enter user details</h2>
+      <div class="form-control">
+        <label for="username">username</label>
+        <input type="text" id="Username" value="" placeholder="enter user name">
+        <small>Error Message</small>
+      </div>
+      <div class="form-control">
+        <label for="email">email</label>
+        <input type="text" id="Email" placeholder="enter email">
+        <small>Error Message</small>
+      </div>
+      <div class="form-control">
+        <label for="password">password</label>
+        <input type="text" id="Password" placeholder="enter your password">
+        <small>Error Message</small>
+      </div>
+      <div class="form-control">
+        <label for="password2">confirm password</label>
+        <input type="text" id="Password2" placeholder="enter your password again">
+        <small>Error Message</small>
+      </div>
+      <button>Submit</button>
+    </form>
+  </div>
+
+
+<script>
+  let password_value = '';
+  const form = document.getElementById('form');
+  const username = document.getElementById('Username');
+  const email = document.getElementById('Email');
+  const password = document.getElementById('Password');
+  const password2 = document.getElementById('Password2');
+
+
+  function showError (input, message){
+    const formControl = input.parentElement;
+    formControl.className = 'form-control error';
+    const small = formControl.querySelector('small');
+    small.innerText = message;
+  }
+  function showSucess(input){
+    const formControl = input.parentElement;
+    console.log(formControl)
+    formControl.className = 'form-control sucess';
+  }
+
+function checkRequired(inputArray)
+{
+  var numbers = /[0-9]/g;
+  var lowerCaseLetters = /[a-z]/g;
+  var upperCaseLetters = /[A-Z]/g;
+  var checkEmail = /(?:[a-z0-9+!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/i;
+
+  
+  inputArray.forEach(
+    function(input)
+    {
+      if(input.value.trim() === ''){
+        showError(input,'Please Enter ' + input.id)
+      } 
+      else {
+        if(input.id === 'Username' ){
+          if(numbers.test(input.value) === true ){
+            showError(input,'User name should not contain integer value')
+            return false;
+          }
+          else if(input.value.length < 6){
+            showError(input,'Username Length Should Be Greater Than 6')
+            return false;
+          }
+        }
+        if(checkEmail.test(input.value) === false){
+          showError(input,'Your email is not valid')
+            return false;
+        }
+        if(input.id === 'Password'){
+          if(lowerCaseLetters.test(input.value) === false){
+            showError(input,'Password Should Have A Lowercase Letter')
+            return false;
+          }
+          else if(upperCaseLetters.test(input.value) === false){
+            showError(input,'Password Should Have A Uppercase Letter')
+            return false;
+          }
+          else if(numbers.test(input.value) === false){
+            showError(input,'Password Should Have A Number Letter')
+            return false;
+          }
+          else if(input.value.length <= 8){
+            showError(input,'Password Should Be Atleast 8 Character Long')
+            return false;
+          }
+          else {
+            password_value = input.value
+          }
+        } 
+        if (input.id === 'Password2' && input.value != password_value){
+          showError(input,'Password Value Should Match')
+          return false;
+        }
+        showSucess(input)
+      }
+    }
+  );
+}
+
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    checkRequired([username, email, password, password2])
+  })
+
+
+
+
+</script>
+</body>
+
+</html>
